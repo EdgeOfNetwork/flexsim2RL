@@ -3,17 +3,23 @@ from flexsim_env import FlexSimEnv
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
+import file_config
+import time
+from datetime import timedelta
+
 
 def main():
+    start = time.process_time()
     print("Initializing FlexSim environment...")
 
     # Create a FlexSim OpenAI Gym Environment
     env = FlexSimEnv(
-        flexsimPath = "C:/Program Files/FlexSim 2022/program/flexsim.exe",
-        modelPath = "C:/Users/USERNAME/Documents/FlexSim 2022 Projects/MyModel.fsm",
+        flexsimPath= file_config.configs['flexsimPath'],
+        modelPath = file_config.configs['modelPath'],
         verbose = False,
         visible = False
-        )
+    )
+
     check_env(env) # Check that an environment follows Gym API.
 
     # Training a baselines3 PPO model in the environment
@@ -23,7 +29,7 @@ def main():
     
     # save the model
     print("Saving model...")
-    model.save("MyTrainedModel")
+    model.save("flex_rl_model")
 
     input("Waiting for input to do some test runs...")
 
@@ -43,6 +49,10 @@ def main():
                 cumulative_reward = sum(rewards)
                 print("Reward: ", cumulative_reward, "\n")
     env._release_flexsim()
+    end = time.process_time()
+    print("Traing Time Elapsed: ", end - start)
+    print("Traing Time Elapsed: ", timedelta(seconds = end - start))
+
     input("Waiting for input to close FlexSim...")
     env.close()
 

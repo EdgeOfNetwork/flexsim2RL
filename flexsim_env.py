@@ -6,6 +6,8 @@ import json
 from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
+import file_config
+
 
 class FlexSimEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array', 'ansi']}
@@ -53,12 +55,12 @@ class FlexSimEnv(gym.Env):
         self.seedNum = seed
         return self.seedNum
 
-    
     def _launch_flexsim(self):
         if self.verbose:
             print("Launching " + self.flexsimPath + " " + self.modelPath)
 
         args = [self.flexsimPath, self.modelPath, "-training", self.address + ':' + str(self.port)]
+
         if self.visible == False:
             args.append("-maintenance")
             args.append("nogui")
@@ -199,11 +201,13 @@ class NumpyEncoder(json.JSONEncoder):
 def main():
 
     env = FlexSimEnv(
-        flexsimPath = "C:/Program Files/FlexSim 2022/program/flexsim.exe",
-        modelPath = "C:/Users/USERNAME/Documents/FlexSim 2022 Projects/MyModel.fsm",
+        flexsimPath= file_config.configs['flexsimPath'],
+        modelPath = file_config.configs['modelPath'],
         verbose = True,
         visible = True
-        )
+    )
+
+    #TODO : git에 올리려면 config은 따로 숨기고 .gitignore에 config을 지정해야할꺼다
 
     for i in range(2):
         env.seed(i)
@@ -219,6 +223,7 @@ def main():
             if done:
                 cumulative_reward = sum(rewards)
                 print("Reward: ", cumulative_reward, "\n")
+
     env._release_flexsim()
     input("Waiting for input to close FlexSim...")
     env.close()

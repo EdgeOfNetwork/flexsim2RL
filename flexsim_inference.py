@@ -4,8 +4,8 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 import numpy as np
 
-class FlexSimInferenceServer(BaseHTTPRequestHandler):
 
+class FlexSimInferenceServer(BaseHTTPRequestHandler):
     def do_GET(self):
         params = parse_qs(urlparse(self.path).query)
         self._handle_reply(params)
@@ -53,7 +53,7 @@ class NumpyEncoder(json.JSONEncoder):
 
 def main():
     print("Loading model...")
-    model = PPO.load("MyTrainedModel")
+    model = PPO.load("flex_rl_model")
     FlexSimInferenceServer.model = model
     
     # Create server object
